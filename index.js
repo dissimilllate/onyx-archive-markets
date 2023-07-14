@@ -1,6 +1,7 @@
 require('dotenv').config();
 const axios = require('axios');
 const { MongoClient } = require('mongodb');
+const { CronJob } = require('cron');
 
 const client = new MongoClient(process.env.MONGODB_URI);
 
@@ -23,7 +24,7 @@ async function main() {
     );
   }
 
-  setInterval(async () => {
+  const job = new CronJob(process.env.CRON_ARCHIVE_INTERVAL, async () => {
     const data = await axios.get(process.env.ONYX_MARKETS_URL);
     await db.collection(process.env.MONGODB_COLLECTION_NAME).insertOne({
       timestamp: new Date(),
@@ -32,7 +33,9 @@ async function main() {
       },
       data: data.data,
     });
-  }, process.env.FREQ);
+  });
+
+  job.start();
 }
 
 main();
