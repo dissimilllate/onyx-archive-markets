@@ -1,22 +1,18 @@
+require('dotenv').config();
 const axios = require('axios');
 const { MongoClient } = require('mongodb');
 
-const XCN_URL = 'https://api.onyx.org/api/xcn';
-const DB_URL = 'mongodb://localhost:27017';
-const DB_NAME = 'onyxmarkets';
+const client = new MongoClient(process.env.MONGODB_URI);
 
-const client = new MongoClient(DB_URL);
-
-let db;
 
 async function main() {
   await client.connect();
 
-  db = client.db(DB_NAME);
+  const db = client.db(process.env.MONGODB_DATABASE);
 
-  if (!(await db.listCollections({name: 'markets'}).toArray()).length) {
+  if (!(await db.listCollections({name: process.env.MONGODB_COLLECTION_NAME}).toArray()).length) {
     await db.createCollection(
-      'markets',
+      process.env.MONGODB_COLLECTION_NAME,
       {
         timeseries: {
           timeField: 'timestamp',
@@ -27,17 +23,16 @@ async function main() {
     );
   }
 
-
   setInterval(async () => {
-    const data = await axios.get(XCN_URL);
-    await db.collection('markets').insertOne({
+    const data = await axios.get(process.env.ONYX_MARKETS_URL);
+    await db.collection(process.env.MONGODB_COLLECTION_NAME).insertOne({
       timestamp: new Date(),
       metadata: {
-        sourceUrl: XCN_URL,
+        sourceUrl: process.env.ONYX_MARKETS_URL,
       },
       data: data.data,
     });
-  }, 10000);
+  }, process.env.FREQ);
 }
 
 main();
