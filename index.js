@@ -19,6 +19,8 @@ async function main() {
     });
 
     job.start();
+
+    console.log('Started archive markets job');
   } catch (error) {
     console.error(error);
     process.exit(1);
