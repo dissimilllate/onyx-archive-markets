@@ -1,15 +1,15 @@
 require('dotenv').config();
 const axios = require('axios');
 const { CronJob } = require('cron');
-const { initDatabase } = require('./database/Mongo.database');
+const db = require('./database/Mongo.database');
 
 async function main() {
   try {
-    const db = await initDatabase();
+    await db.init();
 
     const job = new CronJob(process.env.CRON_ARCHIVE_INTERVAL, async () => {
       const data = await axios.get(process.env.ONYX_MARKETS_URL);
-      await db.collection(process.env.MONGODB_COLLECTION_NAME).insertOne({
+      await db.insertOne(process.env.MONGODB_COLLECTION_NAME, {
         timestamp: new Date(),
         metadata: {
           sourceUrl: process.env.ONYX_MARKETS_URL,
@@ -19,7 +19,6 @@ async function main() {
     });
 
     job.start();
-
     console.log('Started archive markets job');
   } catch (error) {
     console.error(error);

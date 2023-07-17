@@ -1,13 +1,15 @@
 require('dotenv').config();
 const { MongoClient } = require('mongodb');
 
-async function initDatabase() {
+let db;
+
+async function init() {
   try {
     const client = new MongoClient(process.env.MONGODB_URI);
 
     await client.connect();
 
-    const db = client.db(process.env.MONGODB_DATABASE);
+    db = client.db(process.env.MONGODB_DATABASE);
 
     if (!(await db.listCollections({name: process.env.MONGODB_COLLECTION_NAME}).toArray()).length) {
         await db.createCollection(
@@ -23,12 +25,18 @@ async function initDatabase() {
     }
 
     console.log('Connected to MongoDB');
-
-    return db;
   } catch (error) {
     console.error("DB initialization error", error);
     process.exit(1);
   }
 }
 
-module.exports = { initDatabase };
+function find(collectionName, query) {
+  return db.collection(collectionName).find(query).toArray();
+}
+
+function insertOne(collectionName, doc) {
+  return db.collection(collectionName).insertOne(doc);
+}
+
+module.exports = { init, find, insertOne };
