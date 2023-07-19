@@ -12,13 +12,13 @@ async function init() {
     db = client.db(process.env.MONGODB_DATABASE);
 
     if (!(await db.listCollections({name: process.env.MONGODB_COLLECTION_NAME}).toArray()).length) {
-        await db.createCollection(
-          process.env.MONGODB_COLLECTION_NAME,
-          {
-            timeseries: {
-              timeField: 'timestamp',
-              metaField: 'metadata',
-              granularity: 'hours',
+      await db.createCollection(
+        process.env.MONGODB_COLLECTION_NAME,
+        {
+          timeseries: {
+            timeField: 'timestamp',
+            metaField: 'metadata',
+            granularity: 'hours',
           },
         },
       );
@@ -26,7 +26,7 @@ async function init() {
 
     console.log('Connected to MongoDB');
   } catch (error) {
-    console.error("DB initialization error", error);
+    console.error('DB initialization error', error);
     process.exit(1);
   }
 }
