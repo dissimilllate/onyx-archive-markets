@@ -36,8 +36,8 @@ async function init() {
   }
 }
 
-function find(collectionName, query) {
-  return db.collection(collectionName).find(query).toArray();
+function find(collectionName, query, sort) {
+  return db.collection(collectionName).find(query).sort(sort).toArray();
 }
 
 function insertOne(collectionName, doc) {
