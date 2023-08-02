@@ -1,19 +1,24 @@
-require('dotenv').config();
 const { MongoClient } = require('mongodb');
 
 let db;
 
+const {
+  MONGODB_URI,
+  MONGODB_DATABASE,
+  MONGODB_COLLECTION_NAME,
+} = process.env;
+
 async function init() {
   try {
-    const client = new MongoClient(process.env.MONGODB_URI);
+    const client = new MongoClient(MONGODB_URI);
 
     await client.connect();
 
-    db = client.db(process.env.MONGODB_DATABASE);
+    db = client.db(MONGODB_DATABASE);
 
-    if (!(await db.listCollections({name: process.env.MONGODB_COLLECTION_NAME}).toArray()).length) {
+    if (!(await db.listCollections({name: MONGODB_COLLECTION_NAME}).toArray()).length) {
       await db.createCollection(
-        process.env.MONGODB_COLLECTION_NAME,
+        MONGODB_COLLECTION_NAME,
         {
           timeseries: {
             timeField: 'timestamp',
