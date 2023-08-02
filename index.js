@@ -2,6 +2,8 @@ require('dotenv').config();
 const axios = require('axios');
 const { CronJob } = require('cron');
 const db = require('./database/Mongo.database');
+const { initApi } = require('./api');
+
 const {
   ONYX_MARKETS_URL,
   MONGODB_COLLECTION_NAME,
@@ -25,6 +27,8 @@ async function main() {
 
     job.start();
     console.log('Started archive markets job');
+
+    initApi();
   } catch (error) {
     console.error(error);
     process.exit(1);
