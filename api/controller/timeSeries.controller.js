@@ -1,21 +1,49 @@
-const {getTimeSeriesData} = require('../../service/data.service');
+const {
+  getTimeSeriesData,
+  getTimeSeriesMarketsData,
+  getTimeSeriesMarketVolumeData,
+} = require('../../service/data.service');
 
-async function timeSeries(req, res) {
+async function timeSeriesHandler(req, res) {
   try {
-    const { symbol, value, startTimestamp, endTimestamp } = req.query;
+    const { value, startTimestamp, endTimestamp } = req.query;
 
     const startDate = startTimestamp ? new Date(startTimestamp) : undefined;
     const endDate = endTimestamp ? new Date(endTimestamp) : undefined;
 
-    if (startTimestamp && startDate.toString() === 'Invalid Date') {
-      return res.status(400).send('Invalid startTimestamp parameter');
-    }
+    const data = await getTimeSeriesData(value, startDate, endDate);
 
-    if (endTimestamp && endDate.toString() === 'Invalid Date') {
-      return res.status(400).send('Invalid endTimestamp parameter');
-    }
+    return res.send(data);
+  } catch (error) {
+    console.log(error);
+    return res.status(500).send('Request failed');
+  }
+}
 
-    const data = await getTimeSeriesData(symbol, value, startDate, endDate);
+async function timeSeriesMarketsHandler(req, res) {
+  try {
+    const { value, startTimestamp, endTimestamp, symbol } = req.query;
+
+    const startDate = startTimestamp ? new Date(startTimestamp) : undefined;
+    const endDate = endTimestamp ? new Date(endTimestamp) : undefined;
+
+    const data = await getTimeSeriesMarketsData(symbol, value, startDate, endDate);
+
+    return res.send(data);
+  } catch (error) {
+    console.log(error);
+    return res.status(500).send('Request failed');
+  }
+}
+
+async function timeSeriesMarketVolumeHandler(req, res) {
+  try {
+    const { value, startTimestamp, endTimestamp } = req.query;
+
+    const startDate = startTimestamp ? new Date(startTimestamp) : undefined;
+    const endDate = endTimestamp ? new Date(endTimestamp) : undefined;
+
+    const data = await getTimeSeriesMarketVolumeData(value, startDate, endDate);
 
     return res.send(data);
   } catch (error) {
@@ -25,5 +53,7 @@ async function timeSeries(req, res) {
 }
 
 module.exports = {
-  timeSeries,
+  timeSeriesHandler,
+  timeSeriesMarketsHandler,
+  timeSeriesMarketVolumeHandler,
 };
