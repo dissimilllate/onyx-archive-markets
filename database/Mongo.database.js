@@ -44,4 +44,8 @@ function insertOne(collectionName, doc) {
   return db.collection(collectionName).insertOne(doc);
 }
 
-module.exports = { init, find, insertOne };
+module.exports = {
+  init,
+  find,
+  insertOne,
+};
