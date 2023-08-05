@@ -26,7 +26,7 @@ async function getTimeSeriesData(value, startDate, endDate) {
 
   return documents.map((document) => {
     return {
-      value: document.data.data[value],
+      value: +document.data.data[value],
       timestamp: document.timestamp,
     };
   });
@@ -55,7 +55,7 @@ async function getTimeSeriesMarketsData(value, startDate, endDate, symbol) {
   return documents.map((document) => {
     const market = document.data.data.markets.find((market) => market.symbol.toLowerCase() === symbol.toLowerCase());
     return {
-      value: market[value],
+      value: +market[value],
       timestamp: document.timestamp,
     };
   });
@@ -83,14 +83,30 @@ async function getTimeSeriesMarketVolumeData(value, startDate, endDate) {
 
   return documents.map((document) => {
     return {
-      value: document.data.data.marketVolumeLog[value],
+      value: +document.data.data.marketVolumeLog[value],
       timestamp: document.timestamp,
     };
   });
+}
+
+async function getTimeSeriesPercent(data) {
+  if (data.length) {
+    const p = data[0].value / 100;
+
+    return data.map((x) => {
+      return {
+        value: x.value / p - 100,
+        timestamp: x.timestamp,
+      };
+    });
+  } else {
+    return [];
+  }
 }
 
 module.exports = {
   getTimeSeriesData,
   getTimeSeriesMarketsData,
   getTimeSeriesMarketVolumeData,
+  getTimeSeriesPercent,
 };
