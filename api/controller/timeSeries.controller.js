@@ -15,16 +15,14 @@ async function timeSeriesHandler(req, res) {
     let data = await getTimeSeriesData(value, startDate, endDate);
 
     if (valueType === 'percent') {
-      data = await getTimeSeriesPercent(data);
+      data = getTimeSeriesPercent(data);
     }
-
-    console.log(data);
 
     return res.json({
       data,
     });
   } catch (error) {
-    console.log(error);
+    console.error(error);
     return res.status(500).send('Request failed');
   }
 }
@@ -39,14 +37,14 @@ async function timeSeriesMarketsHandler(req, res) {
     let data = await getTimeSeriesMarketsData(value, startDate, endDate, symbol);
 
     if (valueType === 'percent') {
-      data = await getTimeSeriesPercent(data);
+      data = getTimeSeriesPercent(data);
     }
 
     return res.json({
       data,
     });
   } catch (error) {
-    console.log(error);
+    console.error(error);
     return res.status(500).send('Request failed');
   }
 }
@@ -61,14 +59,14 @@ async function timeSeriesMarketVolumeHandler(req, res) {
     let data = await getTimeSeriesMarketVolumeData(value, startDate, endDate);
 
     if (valueType === 'percent') {
-      data = await getTimeSeriesPercent(data);
+      data = getTimeSeriesPercent(data);
     }
 
     return res.json({
       data,
     });
   } catch (error) {
-    console.log(error);
+    console.error(error);
     return res.status(500).send('Request failed');
   }
 }
