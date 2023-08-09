@@ -31,7 +31,7 @@ function App() {
 
       setData(a.data);
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
   }
 

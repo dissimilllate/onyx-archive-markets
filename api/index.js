@@ -5,16 +5,16 @@ const routes = require('./routes');
 const app = express();
 
 const {
-  PORT,
-  HOST,
+  API_PORT,
+  API_HOST,
 } = process.env;
 
 app.use(cors());
 
 function initApi() {
-  app.listen(PORT, HOST, () => {
+  app.listen(API_PORT, API_HOST, () => {
     routes(app);
-    console.log(`Server started at ${HOST}:${PORT}`);
+    console.log(`Server started at ${API_HOST}:${API_PORT}`);
   });
 }
 

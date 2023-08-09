@@ -36,12 +36,14 @@ async function init() {
   }
 }
 
-function find(collectionName, query, sort) {
-  return db.collection(collectionName).find(query).sort(sort).toArray();
+function find(query, sort,) {
+  return db.collection(MONGODB_COLLECTION_NAME).find(query).sort(sort).toArray();
 }
 
-function insertOne(collectionName, doc) {
-  return db.collection(collectionName).insertOne(doc);
+function insertOne(doc) {
+  return db.collection(MONGODB_COLLECTION_NAME).insertOne(doc);
+}
+
 function aggregate(pipeline) {
   return db.collection(MONGODB_COLLECTION_NAME).aggregate(pipeline).toArray();
 }
