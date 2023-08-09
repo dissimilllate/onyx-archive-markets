@@ -20,7 +20,7 @@ async function getTimeSeriesData(value, startDate, endDate, isFirstAndLast) {
   });
 }
 
-async function getTimeSeriesMarketsData(value, startDate, endDate, isFirstAndLast, symbol) {
+async function getTimeSeriesMarketsData(value, startDate, endDate, symbol, isFirstAndLast) {
   let documents;
   if (isFirstAndLast) {
     documents = await getFirstAndLastData(startDate, endDate);

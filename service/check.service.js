@@ -69,7 +69,7 @@ async function checkTimeSeriesData(value, startDate, endDate) {
 }
 
 async function checkTimeSeriesMarketsData(value, startDate, endDate, symbol){
-  const data = await getTimeSeriesMarketsData(value, startDate, endDate, true, symbol);
+  const data = await getTimeSeriesMarketsData(value, startDate, endDate, symbol, true);
 
   return checkData(data, constants.markets[symbol][value]);
 }
