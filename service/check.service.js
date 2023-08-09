@@ -1,12 +1,86 @@
 const {
   getTimeSeriesData,
   getTimeSeriesMarketsData,
+  getTimeSeriesMarketVolumeData,
 } = require('./data.service');
 
+const constants = require('../check.constants');
 
-async function checkData(value, startDate, endDate, changeLimit) {
-  const data = await getTimeSeriesData(value, startDate, endDate);
+let firstDate = Date.now();
 
+async function check() {
+  const failedChecks = [];
+  const currentDate = new Date(Date.now());
+
+  for (const value in constants.default) {
+    const result = await checkTimeSeriesData(value, firstDate, currentDate);
+
+    if (!result.success) {
+      failedChecks.push({
+        value,
+        startTimestamp: result.startTimestamp,
+        endTimestamp: result.endTimestamp,
+        diff: result.diff,
+        diffPercent: result.diffPercent,
+      });
+    }
+  }
+
+  for (const symbol in constants.markets) {
+    for (const value in constants.markets[symbol]) {
+      const result = await checkTimeSeriesMarketsData(value, firstDate, currentDate, symbol);
+
+      if (!result.success) {
+        failedChecks.push({
+          value,
+          symbol,
+          startTimestamp: result.startTimestamp,
+          endTimestamp: result.endTimestamp,
+          diff: result.diff,
+          diffPercent: result.diffPercent,
+        });
+      }
+    }
+  }
+
+  for (const value in constants.marketVolumeLog) {
+    const result = await checkTimeSeriesMarketVolumeData(value, firstDate, currentDate);
+
+    if (!result.success) {
+      failedChecks.push({
+        value,
+        startTimestamp: result.startTimestamp,
+        endTimestamp: result.endTimestamp,
+        diff: result.diff,
+        diffPercent: result.diffPercent,
+      });
+    }
+  }
+
+  firstDate = currentDate;
+
+  return failedChecks;
+}
+
+async function checkTimeSeriesData(value, startDate, endDate) {
+  const data = await getTimeSeriesData(value, startDate, endDate, true);
+
+  return checkData(data, constants[value]);
+}
+
+async function checkTimeSeriesMarketsData(value, startDate, endDate, symbol){
+  const data = await getTimeSeriesMarketsData(value, startDate, endDate, true, symbol);
+
+  return checkData(data, constants.markets[symbol][value]);
+}
+
+async function checkTimeSeriesMarketVolumeData(value, startDate, endDate) {
+  const data = await getTimeSeriesMarketVolumeData(value, startDate, endDate, true);
+
+  return checkData(data, constants.marketVolumeLog[value]);
+}
+
+function checkData(data, changeLimit) {
   if (data.length) {
     const first = data[0].value;
     const last = data[data.length - 1].value;
@@ -14,15 +88,13 @@ async function checkData(value, startDate, endDate, changeLimit) {
     const diff = last - first;
     const diffPercent = diff / p;
 
-    const firstDate = new Date(data[0].timestamp);
-    const lastDate = new Date(data[data.length - 1].timestamp);
-    const dateDiff = lastDate - firstDate;
-    const dateDiffHours = dateDiff / 1000 / 60 / 60;
-
     if (Math.abs(diffPercent) >= changeLimit) {
       return {
         success: false,
-        message: `${value} changed by ${diffPercent} (${diff}) in ${dateDiffHours} h`,
+        diff,
+        diffPercent,
+        startTimestamp: data[0].timestamp,
+        endTimestamp: data[data.length - 1].timestamp,
       };
     }
   }
@@ -31,36 +103,6 @@ async function checkData(value, startDate, endDate, changeLimit) {
     success: true,
   };
 }
-
-async function checkMarketsData(symbol, value, startDate, endDate, changeLimit) {
-  const data = await getTimeSeriesMarketsData(symbol, value, startDate, endDate);
-
-  if (data.length) {
-    const first = data[0].value;
-    const last = data[data.length - 1].value;
-    const p = first / 100;
-    const diff = last - first;
-    const diffPercent = diff / p;
-
-    const firstDate = new Date(data[0].timestamp);
-    const lastDate = new Date(data[data.length - 1].timestamp);
-    const dateDiff = lastDate - firstDate;
-    const dateDiffHours = dateDiff / 1000 / 60 / 60;
-
-    if (Math.abs(diffPercent) >= changeLimit) {
-      return {
-        success: false,
-        message: `${symbol}:${value} changed by ${diffPercent} (${diff}) in ${dateDiffHours} h`,
-      };
-    }
-  }
-
-  return {
-    success: true,
-  };
-}
-
 module.exports = {
-  checkMarketsData,
-  checkData,
+  check,
 };

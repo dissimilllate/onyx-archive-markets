@@ -42,10 +42,13 @@ function find(collectionName, query, sort) {
 
 function insertOne(collectionName, doc) {
   return db.collection(collectionName).insertOne(doc);
+function aggregate(pipeline) {
+  return db.collection(MONGODB_COLLECTION_NAME).aggregate(pipeline).toArray();
 }
 
 module.exports = {
   init,
   find,
   insertOne,
+  aggregate,
 };
