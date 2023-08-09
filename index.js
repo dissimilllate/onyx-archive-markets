@@ -42,7 +42,7 @@ async function main() {
             const diffHours = (failedCheck.endTimestamp - failedCheck.startTimestamp) / 1000 / 60 / 60;
             const message = `${failedCheck.value}${failedCheck.symbol ? ':' + failedCheck.symbol : ''} has changed by ${failedCheck.diffPercent}% (${failedCheck.diff}) in ${diffHours} hours`;
 
-            notify(message, 'error');
+            notify(message, 'warn');
             console.error(message);
           }
         }
