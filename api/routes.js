@@ -7,9 +7,9 @@ const {
 const { validateRequest } = require('./middleware/validator');
 
 module.exports = function (app) {
-  app.get('/api', validateRequest, timeSeriesHandler);
+  app.get('/api/timeseries', validateRequest, timeSeriesHandler);
 
-  app.get('/api/markets', validateRequest, timeSeriesMarketsHandler);
+  app.get('/api/timeseries/markets', validateRequest, timeSeriesMarketsHandler);
 
-  app.get('/api/marketVolumeLog', validateRequest, timeSeriesMarketVolumeHandler);
+  app.get('/api/timeseries/marketVolumeLog', validateRequest, timeSeriesMarketVolumeHandler);
 };

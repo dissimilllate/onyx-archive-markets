@@ -15,7 +15,7 @@ function App() {
   async function fetchData() {
     try {
       const result = await fetch(
-        `http://${config.apiHost}:${config.apiPort}/api/${type}?${new URLSearchParams({
+        `http://${config.apiHost}:${config.apiPort}/api/timeseries/${type}?${new URLSearchParams({
           value,
           valueType,
           startTimestamp,
@@ -48,7 +48,7 @@ function App() {
         </form>
         <form>
           <select value={type} onChange={(e) => setType(e.target.value)}>
-            <option value="/">Default</option>
+            <option value="">Default</option>
             <option value="markets">Markets</option>
             <option value="marketVolumeLog">MarketVolumeLog</option>
           </select>
